@@ -1,0 +1,52 @@
+name: Deploy AutoData Database
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "AutoData/**"
+
+jobs:
+  build-and-deploy:
+    # NOTE: For on-premise SQL Server, this job must run on a self-hosted runner
+    # that has network access to the target server, OR you must configure a VPN
+    # step before the deploy step if using a GitHub-hosted runner.
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build AutoData dacpac
+        run: |
+          msbuild AutoData/AutoData.sqlproj `
+            /p:Configuration=Release `
+            /p:Platform="Any CPU" `
+            /p:OutDir="${{ github.workspace }}\AutoData\bin\Release\" `
+            /t:Build
+
+      - name: Install sqlpackage
+        run: dotnet tool install --global microsoft.sqlpackage
+
+      - name: Publish AutoData to SQL Server
+        env:
+          SQL_SERVER: ${{ secrets.SQL_SERVER }}
+          SQL_DATABASE: ${{ secrets.SQL_DATABASE }}
+          SQL_USERNAME: ${{ secrets.SQL_USERNAME }}
+          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
+        run: |
+          sqlpackage `
+            /Action:Publish `
+            /SourceFile:"AutoData\bin\Release\AutoData.dacpac" `
+            /TargetServerName:"$env:SQL_SERVER" `
+            /TargetDatabaseName:"$env:SQL_DATABASE" `
+            /TargetUser:"$env:SQL_USERNAME" `
+            /TargetPassword:"$env:SQL_PASSWORD" `
+            /p:BlockOnPossibleDataLoss=false `
+            /p:DropObjectsNotInSource=false `
+            /p:ExcludeObjectTypes=Logins;Users;Permissions;RoleMembership
