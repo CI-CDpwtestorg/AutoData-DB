@@ -18,55 +18,42 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Resolve SSDT targets path
+      - name: Resolve MSBuild and SSDT toolchain
         shell: powershell
         run: |
-          $candidates = New-Object System.Collections.Generic.List[string]
-
-          # Explicit paths first (fast path).
-          @(
-            "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets",
-            "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\MSBuild\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets",
-            "C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets"
-          ) | ForEach-Object { [void]$candidates.Add($_) }
-
-          # Discover installed VS instances (BuildTools/Community/Professional/Enterprise).
+          $selected = $null
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
           if (Test-Path $vswhere) {
             $installPaths = & $vswhere -products * -requires Microsoft.Component.MSBuild -property installationPath
             foreach ($installPath in $installPaths) {
-              if (-not [string]::IsNullOrWhiteSpace($installPath)) {
-                [void]$candidates.Add((Join-Path $installPath "MSBuild\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets"))
+              if ([string]::IsNullOrWhiteSpace($installPath)) { continue }
+
+              $msbuildExe = Join-Path $installPath "MSBuild\Current\Bin\MSBuild.exe"
+              $sqlTargets = Join-Path $installPath "MSBuild\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets"
+              $sqlTaskDll = Join-Path $installPath "Common7\IDE\Extensions\Microsoft\SQLDB\DAC\Microsoft.Data.Tools.Schema.Tasks.Sql.dll"
+
+              if ((Test-Path $msbuildExe) -and (Test-Path $sqlTargets) -and (Test-Path $sqlTaskDll)) {
+                $selected = [pscustomobject]@{
+                  InstallPath = $installPath
+                  MsbuildExe  = $msbuildExe
+                  SqlTargets  = $sqlTargets
+                }
+                break
               }
             }
           }
 
-          # Broad fallback scan in common roots.
-          $searchRoots = @(
-            "C:\Program Files (x86)\Microsoft Visual Studio",
-            "C:\Program Files\Microsoft Visual Studio",
-            "C:\Program Files (x86)\MSBuild"
-          )
-          foreach ($root in $searchRoots) {
-            if (Test-Path $root) {
-              $found = Get-ChildItem -Path $root -Filter "Microsoft.Data.Tools.Schema.SqlTasks.targets" -Recurse -ErrorAction SilentlyContinue |
-                Select-Object -ExpandProperty FullName
-              foreach ($f in $found) { [void]$candidates.Add($f) }
-            }
+          if (-not $selected) {
+            throw "No compatible Visual Studio instance found with MSBuild + SSDT targets + SQL task DLL. Install SSDT (Microsoft.VisualStudio.Component.SQL.SSDT) in the same VS/Build Tools instance used for MSBuild."
           }
 
-          $targetFile = $candidates | Select-Object -Unique | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $targetFile) {
-            throw "Microsoft.Data.Tools.Schema.SqlTasks.targets not found. Install SSDT (Microsoft.VisualStudio.Component.SQL.SSDT) in Visual Studio Build Tools."
-          }
-
-          $targetDir = Split-Path -Path $targetFile -Parent
+          $targetDir = Split-Path -Path $selected.SqlTargets -Parent
+          "MSBUILD_EXE=$($selected.MsbuildExe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "SQLDBExtensionsRefPath=$targetDir" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Resolved MSBUILD_EXE: $($selected.MsbuildExe)"
           Write-Host "Resolved SQLDBExtensionsRefPath: $targetDir"
 
       - name: Build AutoData dacpac
-        env:
-          MSBUILD_EXE: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
         shell: powershell
         run: |
           & "$env:MSBUILD_EXE" AutoData/AutoData.sqlproj `
