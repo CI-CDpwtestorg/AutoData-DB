@@ -254,7 +254,7 @@
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_New.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_2009_06_25.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_v0.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_v1.sql" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_All.sql" />
     <Build Include="dbo\Stored Procedures\CleanOut_Tencor.sql" />
@@ -263,11 +263,13 @@
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Save091306.sql" />
     <Build Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
     <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <Build Include="exsil_user\Stored Procedures\SP1DataCollector_SP12Only.sql" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_SP11Only.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP3DataCollector.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP3DataCollector.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP3DataCollector.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <None Include="exsil_user\Stored Procedures\SP3DataCollectorWlink.sql" />
     <None Include="exsil_user\Stored Procedures\SP3DataCollectorWlink_View.sql" />
     <Build Include="exsil_user\Stored Procedures\Customer_Query_new.sql" />
