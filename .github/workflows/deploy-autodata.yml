@@ -66,10 +66,21 @@ jobs:
       - name: Install or update sqlpackage
         shell: powershell
         run: |
-          dotnet tool update --global microsoft.sqlpackage
+          $toolPath = Join-Path $env:RUNNER_TEMP "dotnet-tools"
+          New-Item -ItemType Directory -Force -Path $toolPath | Out-Null
+
+          dotnet tool update microsoft.sqlpackage --tool-path $toolPath
           if ($LASTEXITCODE -ne 0) {
-            dotnet tool install --global microsoft.sqlpackage
+            dotnet tool install microsoft.sqlpackage --tool-path $toolPath
           }
+
+          $sqlpackageExe = Join-Path $toolPath "sqlpackage.exe"
+          if (-not (Test-Path $sqlpackageExe)) {
+            throw "sqlpackage.exe not found at $sqlpackageExe after install."
+          }
+
+          "SQLPACKAGE_PATH=$sqlpackageExe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Resolved SQLPACKAGE_PATH: $sqlpackageExe"
 
       - name: Publish AutoData to SQL Server
         env:
@@ -77,7 +88,6 @@ jobs:
           SQL_DATABASE: ${{ secrets.SQL_DATABASE }} # AutoData
           SQL_USERNAME: ${{ secrets.SQL_USERNAME }} # sa
           SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }} # 
-          SQLPACKAGE_PATH: ${{ env.USERPROFILE }}\.dotnet\tools\sqlpackage.exe
         run: |
           & "$env:SQLPACKAGE_PATH" `
             /Action:Publish `
