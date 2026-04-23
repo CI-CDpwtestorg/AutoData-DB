@@ -291,20 +291,16 @@
     <None Include="Security\exsil_user_1.sql" />
     <None Include="Security\shane_britz_1.sql" />
     <None Include="Security\thughes_1.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PreDeploy Include="Script.PreDeployment.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <SqlCmdVariable Include="ALTS">
-      <DefaultValue>AutoData</DefaultValue>
-      <Value>$(SqlCmdVar__1)</Value>
-    </SqlCmdVariable>
+    <Build Include="dbo\Tables\TestTable1.sql" />
+    <Build Include="dbo\Test.sql" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac">
       <HintPath>..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac</HintPath>
       <DatabaseVariable>ALTS</DatabaseVariable>
     </ArtifactReference>
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="AutoData.refactorlog" />
   </ItemGroup>
 </Project>
