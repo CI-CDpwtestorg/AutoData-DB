@@ -10,10 +10,9 @@ on:
 
 jobs:
   build-and-deploy:
-    # NOTE: For on-premise SQL Server, this job must run on a self-hosted runner
-    # that has network access to the target server, OR you must configure a VPN
-    # step before the deploy step if using a GitHub-hosted runner.
-    runs-on: windows-latest
+    # Requires a Windows self-hosted runner with network access
+    # to the target SQL Server.
+    runs-on: [self-hosted, windows]
 
     steps:
       - name: Checkout repository
@@ -30,23 +29,29 @@ jobs:
             /p:OutDir="${{ github.workspace }}\AutoData\bin\Release\" `
             /t:Build
 
-      - name: Install sqlpackage
-        run: dotnet tool install --global microsoft.sqlpackage
+      - name: Install or update sqlpackage
+        shell: pwsh
+        run: |
+          dotnet tool update --global microsoft.sqlpackage
+          if ($LASTEXITCODE -ne 0) {
+            dotnet tool install --global microsoft.sqlpackage
+          }
 
       - name: Publish AutoData to SQL Server
         env:
-          SQL_SERVER: ${{ secrets.SQL_SERVER }}
-          SQL_DATABASE: ${{ secrets.SQL_DATABASE }}
-          SQL_USERNAME: ${{ secrets.SQL_USERNAME }}
-          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
+          SQL_SERVER: ${{ secrets.SQL_SERVER }}  #.\SQLDev3
+          SQL_DATABASE: ${{ secrets.SQL_DATABASE }} # AutoData
+          SQL_USERNAME: ${{ secrets.SQL_USERNAME }} # sa
+          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }} # 
+          SQLPACKAGE_PATH: ${{ env.USERPROFILE }}\.dotnet\tools\sqlpackage.exe
         run: |
-          sqlpackage `
+          & "$env:SQLPACKAGE_PATH" `
             /Action:Publish `
             /SourceFile:"AutoData\bin\Release\AutoData.dacpac" `
             /TargetServerName:"$env:SQL_SERVER" `
             /TargetDatabaseName:"$env:SQL_DATABASE" `
             /TargetUser:"$env:SQL_USERNAME" `
             /TargetPassword:"$env:SQL_PASSWORD" `
-            /p:BlockOnPossibleDataLoss=false `
+            /p:BlockOnPossibleDataLoss=true `
             /p:DropObjectsNotInSource=false `
-            /p:ExcludeObjectTypes=Logins;Users;Permissions;RoleMembership
+            /p:ExcludeObjectTypes=Logins;Users;RoleMembership
