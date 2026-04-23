@@ -82,14 +82,42 @@ jobs:
           "SQLPACKAGE_PATH=$sqlpackageExe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Host "Resolved SQLPACKAGE_PATH: $sqlpackageExe"
 
+      - name: Test SQL connection
+        shell: powershell
+        env:
+          SQL_SERVER: ${{ secrets.SQL_SERVER }}
+          SQL_USERNAME: ${{ secrets.SQL_USERNAME }}
+          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
+        run: |
+          $sqlcmdExe = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE"
+          if (-not (Test-Path $sqlcmdExe)) {
+            throw "sqlcmd.exe not found at $sqlcmdExe"
+          }
+
+          & "$sqlcmdExe" `
+            -S "$env:SQL_SERVER" `
+            -U "$env:SQL_USERNAME" `
+            -P "$env:SQL_PASSWORD" `
+            -C `
+            -Q "SELECT name FROM sys.databases;"
+
       - name: Publish AutoData to SQL Server
+        shell: powershell
         env:
           SQL_SERVER: ${{ secrets.SQL_SERVER }}  #.\SQLDev3
           SQL_DATABASE: ${{ secrets.SQL_DATABASE }} # AutoData
+          SQL_ALTS_DATABASE: ${{ secrets.SQL_ALTS_DATABASE }} # Optional SQLCMD variable override for $(ALTS)
           SQL_USERNAME: ${{ secrets.SQL_USERNAME }} # sa
           SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }} # 
           SQL_TRUST_SERVER_CERT: "True"
         run: |
+          $altsDatabase = $env:SQL_ALTS_DATABASE
+          if ([string]::IsNullOrWhiteSpace($altsDatabase)) {
+            $altsDatabase = $env:SQL_DATABASE
+          }
+
+          Write-Host "Using SQLCMD variable ALTS=$altsDatabase"
+
           & "$env:SQLPACKAGE_PATH" `
             /Action:Publish `
             /SourceFile:"AutoData\bin\Release\AutoData.dacpac" `
@@ -102,4 +130,5 @@ jobs:
             /p:BlockOnPossibleDataLoss=true `
             /p:DropObjectsNotInSource=false `
             /p:TreatVerificationErrorsAsWarnings=true `
+            "/v:ALTS=$altsDatabase" `
             "/p:ExcludeObjectTypes=Logins;Users;RoleMembership"
