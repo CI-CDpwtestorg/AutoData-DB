@@ -69,7 +69,7 @@ jobs:
       - name: Build AutoData dacpac
         shell: powershell
         run: |
-          & "$env:MSBUILD_EXE" AutoData/AutoData.sqlproj `
+          & "$env:MSBUILD_EXE" AutoData/AutoData.CI.sqlproj `
             /p:Configuration=Release `
             /p:Platform="Any CPU" `
             /p:DeployLegacyProcs="$env:DEPLOY_LEGACY_PROCS" `
