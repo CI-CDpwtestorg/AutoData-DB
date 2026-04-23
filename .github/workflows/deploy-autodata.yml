@@ -2,6 +2,11 @@ name: Deploy AutoData Database
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_legacy_procs:
+        description: "Include legacy procs that require Ad Hoc Distributed Queries"
+        required: false
+        default: "false"
   push:
     branches:
       - main
@@ -17,6 +22,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Resolve deployment options
+        shell: powershell
+        run: |
+          $deployLegacy = "${{ github.event.inputs.deploy_legacy_procs || 'false' }}"
+          if ([string]::IsNullOrWhiteSpace($deployLegacy)) { $deployLegacy = "false" }
+          "DEPLOY_LEGACY_PROCS=$deployLegacy" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "DEPLOY_LEGACY_PROCS=$deployLegacy"
 
       - name: Resolve MSBuild and SSDT toolchain
         shell: powershell
@@ -59,6 +72,7 @@ jobs:
           & "$env:MSBUILD_EXE" AutoData/AutoData.sqlproj `
             /p:Configuration=Release `
             /p:Platform="Any CPU" `
+            /p:DeployLegacyProcs="$env:DEPLOY_LEGACY_PROCS" `
             /p:SQLDBExtensionsRefPath="$env:SQLDBExtensionsRefPath" `
             /p:OutDir="${{ github.workspace }}\AutoData\bin\Release\" `
             /t:Build

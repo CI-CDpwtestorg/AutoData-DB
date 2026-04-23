@@ -52,6 +52,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">17.0</VisualStudioVersion>
+    <DeployLegacyProcs Condition="'$(DeployLegacyProcs)' == ''">false</DeployLegacyProcs>
     <!-- Prefer explicit SQLDBExtensionsRefPath when provided -->
     <SqlTasksTargetsPath Condition="'$(SQLDBExtensionsRefPath)' != ''">$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets</SqlTasksTargetsPath>
     <!-- VS Build Tools / VS 2022 common location -->
@@ -260,8 +261,10 @@
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Recipe.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Tim.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Save091306.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <Build Include="exsil_user\Stored Procedures\SP1DataCollector_SP12Only.sql" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_SP11Only.sql" />
     <Build Include="exsil_user\Stored Procedures\SP3DataCollector.sql" />
