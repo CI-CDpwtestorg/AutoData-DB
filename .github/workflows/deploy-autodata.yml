@@ -88,6 +88,7 @@ jobs:
           SQL_DATABASE: ${{ secrets.SQL_DATABASE }} # AutoData
           SQL_USERNAME: ${{ secrets.SQL_USERNAME }} # sa
           SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }} # 
+          SQL_TRUST_SERVER_CERT: "True"
         run: |
           & "$env:SQLPACKAGE_PATH" `
             /Action:Publish `
@@ -96,6 +97,7 @@ jobs:
             /TargetDatabaseName:"$env:SQL_DATABASE" `
             /TargetUser:"$env:SQL_USERNAME" `
             /TargetPassword:"$env:SQL_PASSWORD" `
+            /TargetTrustServerCertificate:"$env:SQL_TRUST_SERVER_CERT" `
             /p:BlockOnPossibleDataLoss=true `
             /p:DropObjectsNotInSource=false `
-            /p:ExcludeObjectTypes=Logins;Users;RoleMembership
+            "/p:ExcludeObjectTypes=Logins;Users;RoleMembership"
