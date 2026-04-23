@@ -51,13 +51,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
-    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
-    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">17.0</VisualStudioVersion>
+    <DeployLegacyProcs Condition="'$(DeployLegacyProcs)' == ''">false</DeployLegacyProcs>
+    <!-- Prefer explicit SQLDBExtensionsRefPath when provided -->
+    <SqlTasksTargetsPath Condition="'$(SQLDBExtensionsRefPath)' != ''">$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets</SqlTasksTargetsPath>
+    <!-- VS Build Tools / VS 2022 common location -->
+    <SqlTasksTargetsPath Condition="'$(SqlTasksTargetsPath)' == '' and Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v17.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets</SqlTasksTargetsPath>
+    <!-- Fallback to current VisualStudioVersion -->
+    <SqlTasksTargetsPath Condition="'$(SqlTasksTargetsPath)' == '' and Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets</SqlTasksTargetsPath>
   </PropertyGroup>
-  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
-  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Target Name="EnsureSqlTargetsPresent" BeforeTargets="Build">
+    <Error Condition="'$(SqlTasksTargetsPath)' == ''" Text="SSDT SqlTasks targets not found. Set SQLDBExtensionsRefPath to the folder containing Microsoft.Data.Tools.Schema.SqlTasks.targets, or install SSDT." />
+  </Target>
+  <Import Condition="'$(SqlTasksTargetsPath)' != ''" Project="$(SqlTasksTargetsPath)" />
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
@@ -248,18 +254,22 @@
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_New.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_2009_06_25.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_v0.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_v1.sql" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_All.sql" />
     <Build Include="dbo\Stored Procedures\CleanOut_Tencor.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Recipe.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Tim.sql" />
     <Build Include="exsil_user\Stored Procedures\Geometry_Data_Save091306.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <Build Include="exsil_user\Stored Procedures\SP1DataCollector_SP12Only.sql" />
     <None Include="exsil_user\Stored Procedures\SP1DataCollector_SP11Only.sql" />
-    <Build Include="exsil_user\Stored Procedures\SP3DataCollector.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP3DataCollector.sql" Condition="'$(DeployLegacyProcs)' == 'true'" />
+    <None Include="exsil_user\Stored Procedures\SP3DataCollector.sql" Condition="'$(DeployLegacyProcs)' != 'true'" />
     <None Include="exsil_user\Stored Procedures\SP3DataCollectorWlink.sql" />
     <None Include="exsil_user\Stored Procedures\SP3DataCollectorWlink_View.sql" />
     <Build Include="exsil_user\Stored Procedures\Customer_Query_new.sql" />
@@ -283,6 +293,15 @@
     <None Include="Security\thughes_1.sql" />
     <Build Include="dbo\Tables\TestTable1.sql" />
     <Build Include="dbo\Test.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Script.PreDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="ALTS">
+      <DefaultValue>AutoData</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac">
