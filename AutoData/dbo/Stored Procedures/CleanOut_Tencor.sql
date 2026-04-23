@@ -1,0 +1,9 @@
+CREATE PROCEDURE dbo.CleanOut_Tencor
+AS
+	DELETE FROM Tencor_Data
+	WHERE (ENTRY =
+		(SELECT   ENTRY
+		FROM      Tencor_Data
+		GROUP BY [TIME], [DATE], ENTRY
+		HAVING   (COUNT_BIG (*) > 5)))
+	RETURN 

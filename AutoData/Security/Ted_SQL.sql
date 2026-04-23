@@ -1,0 +1,2 @@
+﻿CREATE USER [Ted_SQL];
+

@@ -1,0 +1,10 @@
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\bin\Debug\ALTS_Stub.dll
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\bin\Debug\ALTS_Stub.pdb
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\ALTS_Stub.sqlproj.AssemblyReference.cache
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\ALTS_Stub.dll
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\ALTS_Stub.pdb
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\Model.xml
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\refactor.xml
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\postdeploy.sql
+c:\Users\makizhne\OneDrive\Projects\PureWafer\Databases\PFDatabases\AutoData_DB\ALTS_Stub\obj\Debug\predeploy.sql

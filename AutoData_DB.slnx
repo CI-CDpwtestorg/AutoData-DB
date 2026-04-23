@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="AutoData/AutoData.sqlproj" Id="f03436d6-59a0-488b-acfe-2d503af27dcd">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ALTS_Stub/ALTS_Stub.sqlproj" Id="8b4f3a9c-1d72-4e56-b8a3-f6c2917e0d35">
+    <Build />
+  </Project>
+</Solution>

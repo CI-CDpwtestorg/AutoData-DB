@@ -1,0 +1,13 @@
+﻿CREATE PROCEDURE clean_Last_Year AS
+
+DELETE FROM dbo.Archive_SP1_Data
+WHERE     (CreationDate < CONVERT(DATETIME, '2006-01-01 00:00:00', 102))
+
+DELETE FROM dbo.Archive_CR81_DATA
+WHERE     (EventTime < CONVERT(DATETIME, '2006-01-01 00:00:00', 102))
+
+DELETE FROM dbo.Archive_Tencor_Data
+WHERE     (EventTime < CONVERT(DATETIME, '2006-01-01 00:00:00', 102))
+
+DELETE FROM dbo.Archive_ADE_data
+WHERE     (EventTime < CONVERT(DATETIME, '2006-01-01 00:00:00', 102))

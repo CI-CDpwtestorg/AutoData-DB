@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>AutoData</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{f03436d6-59a0-488b-acfe-2d503af27dcd}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>AutoData</RootNamespace>
+    <AssemblyName>AutoData</AssemblyName>
+    <ModelCollation>1033,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+    <SuppressedErrors>71501;71502;71561;71562</SuppressedErrors>
+    <SuppressTSqlWarnings>71562;71502</SuppressTSqlWarnings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="exsil_user\" />
+    <Folder Include="exsil_user\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="exsil_user\Functions\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="exsil_user\Stored Procedures\" />
+    <Folder Include="dbo\Stored Procedures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\T_SATI_SPC_Tools.sql" />
+    <Build Include="dbo\Tables\Archive_DC_NEWDATA2.sql" />
+    <Build Include="dbo\Tables\Archive_SP1_Data.sql" />
+    <Build Include="dbo\Tables\T_SATI_SPC_Items.sql" />
+    <Build Include="dbo\Tables\Archive_Tencor_Data.sql" />
+    <Build Include="exsil_user\Tables\ADE_Recipe_Cutter.sql" />
+    <Build Include="exsil_user\Tables\ADE_Recipe.sql" />
+    <Build Include="dbo\Tables\T_SATI_SPC_Limits.sql" />
+    <Build Include="dbo\Tables\CR81_DATA.sql" />
+    <Build Include="dbo\Tables\TBL_ArchiveArcGrade.sql" />
+    <Build Include="dbo\Tables\ADE_Recipe_Sort_Class_Cutter.sql" />
+    <Build Include="dbo\Tables\TBL_DataSumArc.sql" />
+    <Build Include="dbo\Tables\T_SATI_SPC_AttributeLimitsIndex.sql" />
+    <Build Include="exsil_user\Tables\ADE_Recipe_Sort_Class.sql" />
+    <Build Include="dbo\Tables\TBL_DataSumClassification.sql" />
+    <Build Include="dbo\Tables\T_SATI_SPC_Attribute.sql" />
+    <Build Include="dbo\Tables\Tencor_Data.sql" />
+    <Build Include="dbo\Tables\TBL_DataSumCommonChannel.sql" />
+    <Build Include="dbo\Tables\TBL_DataSumDefect.sql" />
+    <Build Include="dbo\Tables\ADE_data.sql" />
+    <Build Include="dbo\Tables\TBL_DataSumHazeMap.sql" />
+    <Build Include="dbo\Tables\TBL_DataSumInfo.sql" />
+    <Build Include="exsil_user\Tables\AutoBathRecipe.sql" />
+    <Build Include="exsil_user\Tables\AutoBathCurrent.sql" />
+    <Build Include="exsil_user\Tables\AutoBathLog.sql" />
+    <Build Include="exsil_user\Tables\AutoBathSetup.sql" />
+    <Build Include="exsil_user\Tables\AutoToolDataSetup.sql" />
+    <Build Include="dbo\Tables\TBL2_ArchiveArcGrade.sql" />
+    <Build Include="dbo\Tables\Archive_CofA_Metals.sql" />
+    <Build Include="dbo\Tables\Results.sql" />
+    <Build Include="dbo\Tables\Archive_CofA_Geometry.sql" />
+    <Build Include="dbo\Tables\Archive_CofA_Particle.sql" />
+    <Build Include="dbo\Tables\Archive_CofA_Lot.sql" />
+    <Build Include="dbo\Tables\ADE_7200_SPC.sql" />
+    <Build Include="dbo\Tables\SP1_Data_SP5_DW1.sql" />
+    <Build Include="dbo\Tables\Archive_Leo.sql" />
+    <Build Include="exsil_user\Tables\CR81_SPC.sql" />
+    <Build Include="dbo\Tables\SP11_SPC.sql" />
+    <Build Include="dbo\Tables\Archive_DC_OCR.sql" />
+    <Build Include="dbo\Tables\Archive_tblWafers.sql" />
+    <Build Include="exsil_user\Tables\Tencor_SPC.sql" />
+    <Build Include="dbo\Tables\TBL2_DataSumArc.sql" />
+    <Build Include="dbo\Tables\TBL2_DataSumClassification.sql" />
+    <Build Include="dbo\Tables\Sorter_Info.sql" />
+    <Build Include="dbo\Tables\TBL2_DataSumCommonChannel.sql" />
+    <Build Include="dbo\Tables\DC_NEWDATA2.sql" />
+    <Build Include="dbo\Tables\TBL2_DataSumDefect.sql" />
+    <Build Include="dbo\Tables\TBL2_DataSumHazeMap.sql" />
+    <Build Include="dbo\Tables\SP1_Data_SP5_DW2.sql" />
+    <Build Include="dbo\Tables\TBL2_DataSumInfo.sql" />
+    <Build Include="dbo\Tables\ADE_IDs.sql" />
+    <Build Include="dbo\Tables\Archive_CofA_Customer.sql" />
+    <Build Include="dbo\Tables\tblWafers.sql" />
+    <Build Include="dbo\Tables\DC_OCR.sql" />
+    <Build Include="dbo\Tables\Maint1.sql" />
+    <Build Include="dbo\Tables\SP1_Data.sql" />
+    <Build Include="exsil_user\Tables\T_SPC_Tools.sql" />
+    <Build Include="dbo\Tables\tblReceiverID.sql" />
+    <Build Include="dbo\Tables\tblWafersBuffer.sql" />
+    <Build Include="exsil_user\Tables\T_Titrator_Data.sql" />
+    <Build Include="exsil_user\Tables\T_Titrator_Setup.sql" />
+    <Build Include="dbo\Tables\AutoData_Index.sql" />
+    <Build Include="exsil_user\Tables\SurfScan_RejectsByID.sql" />
+    <Build Include="dbo\Tables\Leo.sql" />
+    <Build Include="dbo\Tables\Archive_ADE_data.sql" />
+    <Build Include="dbo\Tables\T_SATI_SPC_Departments.sql" />
+    <Build Include="dbo\Tables\Archive_CR81_DATA.sql" />
+    <Build Include="dbo\Views\HoloCntDiff.sql" />
+    <Build Include="dbo\Views\HoloStation6_Last25.sql" />
+    <Build Include="dbo\Views\HoloStation5_Last25.sql" />
+    <Build Include="dbo\Views\HoloStation4_Last25.sql" />
+    <Build Include="dbo\Views\Q_Bi_SPx_BinFall.sql" />
+    <Build Include="dbo\Views\Q_ADE_Data_WithLotNumber.sql" />
+    <None Include="dbo\Views\Q_SPx_InstanceForSession.sql" />
+    <Build Include="dbo\Views\Q_SPx_SessionDate_Instance.sql" />
+    <None Include="dbo\Views\Q_SPx_Instance_Dupe.sql" />
+    <Build Include="dbo\Views\SP2Last25Sessions.sql" />
+    <Build Include="dbo\Views\SP2Last25Bin1Count.sql" />
+    <Build Include="dbo\Views\SP2Last25Bin2Count.sql" />
+    <Build Include="dbo\Views\SP2Last25Bin3Count.sql" />
+    <Build Include="dbo\Views\SP2Last25LotSummary.sql" />
+    <Build Include="dbo\Views\Q_SP2-3087.sql" />
+    <Build Include="dbo\Views\Q_SPx_Dupe.sql" />
+    <None Include="dbo\Views\CofA_Configuration.sql" />
+    <None Include="dbo\Views\T_SPxRecords_From_TelBench.sql" />
+    <None Include="dbo\Views\Q_Bi_BinFall_W-nm.sql" />
+    <Build Include="dbo\Views\BowWarpComp.sql" />
+    <None Include="Security\exsil_user.sql" />
+    <None Include="Security\daveadmin.sql" />
+    <None Include="Security\Domain Users.sql" />
+    <None Include="Security\thughes.sql" />
+    <None Include="Security\Administrator.sql" />
+    <None Include="Security\Ted_SQL.sql" />
+    <None Include="Security\PUREWAFERINC_STyburek.sql" />
+    <None Include="Security\shane_britz.sql" />
+    <None Include="Security\read_only_global.sql" />
+    <None Include="Security\RoleMemberships.sql" />
+    <Build Include="exsil_user\Functions\fctn_ADE_Receiver_Parser.sql" />
+    <Build Include="dbo\Functions\SPxLast25.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="exsil_user\Functions\fctn_Particle_Data_Recipe.sql" />
+    <Build Include="dbo\Functions\fn_SPC_Final3.sql" />
+    <Build Include="dbo\Functions\fn_SPC_Final1.sql" />
+    <Build Include="dbo\Functions\fn_SPC_SP2-1.sql" />
+    <Build Include="dbo\Functions\fn_SPC_SP3-1.sql" />
+    <Build Include="dbo\Functions\fn_SPC_Final2.sql" />
+    <Build Include="dbo\Functions\fn_SPC_PreSort1.sql" />
+    <Build Include="dbo\Functions\fn_SPC_SP3-2.sql" />
+    <Build Include="dbo\Functions\fn_SPC_PreSort2.sql" />
+    <Build Include="dbo\Functions\fn_SPC_LEO.sql" />
+    <Build Include="dbo\Functions\fn_SPC_GigaSort.sql" />
+    <Build Include="dbo\Functions\fn_SPC_Holo.sql" />
+    <Build Include="dbo\Functions\fn_SPC_Tencor.sql" />
+    <Build Include="dbo\Functions\fn_SPC_Tencor3.sql" />
+    <Build Include="dbo\Functions\fn_SPC_SP1-3.sql" />
+    <Build Include="dbo\Functions\fctn_Sati_PullCR81DataByID.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Functions\fn_SPC_SP5-1.sql" />
+    <Build Include="dbo\Functions\fctn_Sati_SP2CurrentSummary.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="exsil_user\Functions\fctn_Geometry_Data_Recipe.sql" />
+    <Build Include="dbo\Functions\fctn_Sati_PullADEDataByID.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="exsil_user\Functions\fctn_Particle_Data_Recipe_SP1.sql" />
+    <Build Include="dbo\Functions\fctn_Sati_PullSP1DataByID.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="exsil_user\Functions\fctn_Particle_Data_Recipe_SP1_Bin.sql" />
+    <Build Include="dbo\Functions\fctn_Sati_PullTencorDataByID.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <None Include="exsil_user\Functions\fctn_Particle_Data_Recipe_SP1_SOD.sql" />
+    <Build Include="dbo\Functions\fn_SPC_SP1-2.sql" />
+    <Build Include="dbo\Functions\fn_SPC_SP1-1.sql" />
+    <None Include="dbo\Functions\fn_SPC_ICPMS_8900_QC.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector.sql" />
+    <Build Include="dbo\Stored Procedures\clean_Last_Year.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data.sql" />
+    <Build Include="exsil_user\Stored Procedures\Customer_QueryTimTest.sql" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_SP13Only.sql" />
+    <Build Include="exsil_user\Stored Procedures\Customer_Query_Bk08252008.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_Test.sql" />
+    <Build Include="exsil_user\Stored Procedures\Customer_Query.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_Old.sql" />
+    <Build Include="exsil_user\Stored Procedures\GFAA_Metals_Query.sql" />
+    <Build Include="exsil_user\Stored Procedures\HoloGenix_Data.sql" />
+    <Build Include="exsil_user\Stored Procedures\Lot_Query.sql" />
+    <Build Include="exsil_user\Stored Procedures\Final2Bin3_FinalBin7.sql" />
+    <Build Include="exsil_user\Stored Procedures\Particle_Data.sql" />
+    <Build Include="exsil_user\Stored Procedures\Particle_Data_V0.sql" />
+    <Build Include="exsil_user\Stored Procedures\Valid_CofA_PickTicket.sql" />
+    <Build Include="exsil_user\Stored Procedures\GFAA_Metals.sql" />
+    <Build Include="dbo\Stored Procedures\AchiveAutoDataTest.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\SP1DataCollector_New.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Old.sql" />
+    <Build Include="exsil_user\Stored Procedures\Particle_DataTest.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP2DataCollector.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_20090429.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_New.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_2009_06_25.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_v0.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_2009_07_18.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_v1.sql" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_All.sql" />
+    <Build Include="dbo\Stored Procedures\CleanOut_Tencor.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_Recipe.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_Tim.sql" />
+    <Build Include="exsil_user\Stored Procedures\Geometry_Data_Save091306.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_08232007.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_Before_SP1_SQL_upgrade.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP1DataCollector_SP12Only.sql" />
+    <None Include="exsil_user\Stored Procedures\SP1DataCollector_SP11Only.sql" />
+    <Build Include="exsil_user\Stored Procedures\SP3DataCollector.sql" />
+    <None Include="exsil_user\Stored Procedures\SP3DataCollectorWlink.sql" />
+    <None Include="exsil_user\Stored Procedures\SP3DataCollectorWlink_View.sql" />
+    <Build Include="exsil_user\Stored Procedures\Customer_Query_new.sql" />
+    <Build Include="exsil_user\Stored Procedures\Customer_Query_Old.sql" />
+    <Build Include="dbo\Stored Procedures\clean_Last_Year_SPx.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="dbo\Stored Procedures\clean_SPx.sql">
+      <AnsiNulls>Off</AnsiNulls>
+      <QuotedIdentifier>Off</QuotedIdentifier>
+    </Build>
+    <Build Include="exsil_user\Stored Procedures\Metals.sql" />
+    <Build Include="exsil_user\Stored Procedures\Customer_Query_BK05132010.sql" />
+    <None Include="Security\Administrator_1.sql" />
+    <None Include="Security\daveadmin_1.sql" />
+    <None Include="Security\Domain Users_1.sql" />
+    <!-- exsil_user_1.sql excluded: schema auto-inferred from folder; including it caused SQL71508 duplicate -->
+    <None Include="Security\exsil_user_1.sql" />
+    <None Include="Security\shane_britz_1.sql" />
+    <None Include="Security\thughes_1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArtifactReference Include="..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac">
+      <HintPath>..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac</HintPath>
+      <DatabaseVariable>ALTS</DatabaseVariable>
+    </ArtifactReference>
+  </ItemGroup>
+</Project>

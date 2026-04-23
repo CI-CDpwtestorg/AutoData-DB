@@ -1,0 +1,2 @@
+﻿CREATE USER [PUREWAFERINC\STyburek];
+

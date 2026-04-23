@@ -1,0 +1,23 @@
+﻿CREATE TABLE [dbo].[ADE_7200_SPC] (
+    [ENTRY]        INT           IDENTITY (1, 1) NOT NULL,
+    [DATE]         VARCHAR (20)  CONSTRAINT [DF_ADE_7200_SPC_DATE] DEFAULT (convert(varchar(20),getdate(),101)) NULL,
+    [TIME]         VARCHAR (20)  CONSTRAINT [DF_ADE_7200_SPC_TIME] DEFAULT (convert(varchar(20),right(getdate(),7),101)) NULL,
+    [EventTime]    SMALLDATETIME CONSTRAINT [DF_ADE_7200_SPC_EventTime] DEFAULT (getdate()) NULL,
+    [MACHINE]      NVARCHAR (50) NULL,
+    [asset_number] NVARCHAR (50) NULL,
+    [OPERATOR]     NVARCHAR (20) NULL,
+    [THK_MASTER1]  NVARCHAR (50) NULL,
+    [THK_MASTER2]  NVARCHAR (50) NULL,
+    [RES_MASTER1]  NVARCHAR (50) NULL,
+    [RES_MASTER2]  NVARCHAR (50) NULL,
+    [THK_MEAN]     REAL          NULL,
+    [THK_STD_DEV]  REAL          NULL,
+    [TTV_MEAN]     REAL          NULL,
+    [TTV_STD_DEV]  REAL          NULL,
+    [RES_MEAN]     REAL          NULL,
+    [RES_STD_DEV]  REAL          NULL,
+    [OUT_OF_SPC]   TINYINT       NULL,
+    [ACTION_TAKEN] NVARCHAR (10) NULL,
+    CONSTRAINT [PK_ADE_7200_SPC] PRIMARY KEY CLUSTERED ([ENTRY] ASC) WITH (FILLFACTOR = 90)
+);
+
