@@ -18,12 +18,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
       - name: Build AutoData dacpac
+        env:
+          MSBUILD_EXE: C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe
         run: |
-          msbuild AutoData/AutoData.sqlproj `
+          & "$env:MSBUILD_EXE" AutoData/AutoData.sqlproj `
             /p:Configuration=Release `
             /p:Platform="Any CPU" `
             /p:OutDir="${{ github.workspace }}\AutoData\bin\Release\" `
