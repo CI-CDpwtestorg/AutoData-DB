@@ -291,6 +291,12 @@
     <PreDeploy Include="Script.PreDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
+    <SqlCmdVariable Include="ALTS">
+      <DefaultValue>AutoData</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
+  </ItemGroup>
+  <ItemGroup>
     <ArtifactReference Include="..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac">
       <HintPath>..\ALTS_Stub\bin\Debug\ALTS_Stub.dacpac</HintPath>
       <DatabaseVariable>ALTS</DatabaseVariable>
