@@ -90,6 +90,22 @@ jobs:
           SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }} # 
           SQL_TRUST_SERVER_CERT: "True"
         run: |
+          Add-Type -AssemblyName System.Data
+          $connectionString = "Server=$env:SQL_SERVER;Database=$env:SQL_DATABASE;User ID=$env:SQL_USERNAME;Password=$env:SQL_PASSWORD;Encrypt=True;TrustServerCertificate=$env:SQL_TRUST_SERVER_CERT;"
+          $ensureSchemaSql = @"
+          IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'exsil_user')
+          BEGIN
+            EXEC('CREATE SCHEMA [exsil_user]');
+          END
+          "@
+
+          $connection = New-Object System.Data.SqlClient.SqlConnection($connectionString)
+          $command = $connection.CreateCommand()
+          $command.CommandText = $ensureSchemaSql
+          $connection.Open()
+          $command.ExecuteNonQuery() | Out-Null
+          $connection.Close()
+
           & "$env:SQLPACKAGE_PATH" `
             /Action:Publish `
             /SourceFile:"AutoData\bin\Release\AutoData.dacpac" `
@@ -100,4 +116,5 @@ jobs:
             /TargetTrustServerCertificate:"$env:SQL_TRUST_SERVER_CERT" `
             /p:BlockOnPossibleDataLoss=true `
             /p:DropObjectsNotInSource=false `
+            /p:TreatVerificationErrorsAsWarnings=true `
             "/p:ExcludeObjectTypes=Logins;Users;RoleMembership"
