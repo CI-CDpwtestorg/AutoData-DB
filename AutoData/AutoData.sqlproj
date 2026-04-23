@@ -59,6 +59,9 @@
     <!-- Fallback to current VisualStudioVersion -->
     <SqlTasksTargetsPath Condition="'$(SqlTasksTargetsPath)' == '' and Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets</SqlTasksTargetsPath>
   </PropertyGroup>
+  <Target Name="EnsureSqlTargetsPresent" BeforeTargets="Build">
+    <Error Condition="'$(SqlTasksTargetsPath)' == ''" Text="SSDT SqlTasks targets not found. Set SQLDBExtensionsRefPath to the folder containing Microsoft.Data.Tools.Schema.SqlTasks.targets, or install SSDT." />
+  </Target>
   <Import Condition="'$(SqlTasksTargetsPath)' != ''" Project="$(SqlTasksTargetsPath)" />
   <ItemGroup>
     <Folder Include="Properties" />
