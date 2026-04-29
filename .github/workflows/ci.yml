@@ -1,35 +1,25 @@
-name: Deploy AutoData Database
+name: CI AutoData Build
 
 on:
-  workflow_dispatch:
-    inputs:
-      deploy_legacy_procs:
-        description: "Include legacy procs that require Ad Hoc Distributed Queries"
-        required: false
-        default: "false"
   push:
     branches:
       - main
     paths:
       - "AutoData/**"
+      - ".github/workflows/ci-autodata.yml"
+  pull_request:
+    paths:
+      - "AutoData/**"
+      - ".github/workflows/ci-autodata.yml"
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    # Requires a Windows self-hosted runner with network access
-    # to the target SQL Server.
-    runs-on: [self-hosted, windows]
+  build:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Resolve deployment options
-        shell: powershell
-        run: |
-          $deployLegacy = "${{ github.event.inputs.deploy_legacy_procs || 'false' }}"
-          if ([string]::IsNullOrWhiteSpace($deployLegacy)) { $deployLegacy = "false" }
-          "DEPLOY_LEGACY_PROCS=$deployLegacy" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Host "DEPLOY_LEGACY_PROCS=$deployLegacy"
 
       - name: Resolve MSBuild and SSDT toolchain
         shell: powershell
@@ -47,9 +37,8 @@ jobs:
 
               if ((Test-Path $msbuildExe) -and (Test-Path $sqlTargets) -and (Test-Path $sqlTaskDll)) {
                 $selected = [pscustomobject]@{
-                  InstallPath = $installPath
-                  MsbuildExe  = $msbuildExe
-                  SqlTargets  = $sqlTargets
+                  MsbuildExe = $msbuildExe
+                  SqlTargets = $sqlTargets
                 }
                 break
               }
@@ -57,7 +46,7 @@ jobs:
           }
 
           if (-not $selected) {
-            throw "No compatible Visual Studio instance found with MSBuild + SSDT targets + SQL task DLL. Install SSDT (Microsoft.VisualStudio.Component.SQL.SSDT) in the same VS/Build Tools instance used for MSBuild."
+            throw "No compatible Visual Studio instance found with MSBuild + SSDT targets + SQL task DLL."
           }
 
           $targetDir = Split-Path -Path $selected.SqlTargets -Parent
@@ -69,80 +58,16 @@ jobs:
       - name: Build AutoData dacpac
         shell: powershell
         run: |
-          & "$env:MSBUILD_EXE" AutoData/AutoData.CI.sqlproj `
+          & "$env:MSBUILD_EXE" AutoData/AutoData.sqlproj `
             /p:Configuration=Release `
             /p:Platform="Any CPU" `
-            /p:DeployLegacyProcs="$env:DEPLOY_LEGACY_PROCS" `
             /p:SQLDBExtensionsRefPath="$env:SQLDBExtensionsRefPath" `
             /p:OutDir="${{ github.workspace }}\AutoData\bin\Release\" `
             /t:Build
 
-      - name: Install or update sqlpackage
-        shell: powershell
-        run: |
-          $toolPath = Join-Path $env:RUNNER_TEMP "dotnet-tools"
-          New-Item -ItemType Directory -Force -Path $toolPath | Out-Null
-
-          dotnet tool update microsoft.sqlpackage --tool-path $toolPath
-          if ($LASTEXITCODE -ne 0) {
-            dotnet tool install microsoft.sqlpackage --tool-path $toolPath
-          }
-
-          $sqlpackageExe = Join-Path $toolPath "sqlpackage.exe"
-          if (-not (Test-Path $sqlpackageExe)) {
-            throw "sqlpackage.exe not found at $sqlpackageExe after install."
-          }
-
-          "SQLPACKAGE_PATH=$sqlpackageExe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Host "Resolved SQLPACKAGE_PATH: $sqlpackageExe"
-
-      - name: Test SQL connection
-        shell: powershell
-        env:
-          SQL_SERVER: ${{ secrets.SQL_SERVER }}
-          SQL_USERNAME: ${{ secrets.SQL_USERNAME }}
-          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-        run: |
-          $sqlcmdExe = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE"
-          if (-not (Test-Path $sqlcmdExe)) {
-            throw "sqlcmd.exe not found at $sqlcmdExe"
-          }
-
-          & "$sqlcmdExe" `
-            -S "$env:SQL_SERVER" `
-            -U "$env:SQL_USERNAME" `
-            -P "$env:SQL_PASSWORD" `
-            -C `
-            -Q "SELECT name FROM sys.databases;"
-
-      - name: Publish AutoData to SQL Server
-        shell: powershell
-        env:
-          SQL_SERVER: ${{ secrets.SQL_SERVER }}  #.\SQLDev3
-          SQL_DATABASE: ${{ secrets.SQL_DATABASE }} # AutoData
-          SQL_ALTS_DATABASE: ${{ secrets.SQL_ALTS_DATABASE }} # Optional SQLCMD variable override for $(ALTS)
-          SQL_USERNAME: ${{ secrets.SQL_USERNAME }} # sa
-          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }} # 
-          SQL_TRUST_SERVER_CERT: "True"
-        run: |
-          $altsDatabase = $env:SQL_ALTS_DATABASE
-          if ([string]::IsNullOrWhiteSpace($altsDatabase)) {
-            $altsDatabase = $env:SQL_DATABASE
-          }
-
-          Write-Host "Using SQLCMD variable ALTS=$altsDatabase"
-
-          & "$env:SQLPACKAGE_PATH" `
-            /Action:Publish `
-            /SourceFile:"AutoData\bin\Release\AutoData.CI.dacpac" `
-            /TargetServerName:"$env:SQL_SERVER" `
-            /TargetDatabaseName:"$env:SQL_DATABASE" `
-            /TargetUser:"$env:SQL_USERNAME" `
-            /TargetPassword:"$env:SQL_PASSWORD" `
-            /TargetTrustServerCertificate:"$env:SQL_TRUST_SERVER_CERT" `
-            /p:CreateNewDatabase=true `
-            /p:BlockOnPossibleDataLoss=true `
-            /p:DropObjectsNotInSource=false `
-            /p:TreatVerificationErrorsAsWarnings=true `
-            "/v:ALTS=$altsDatabase" `
-            "/p:ExcludeObjectTypes=Logins;Users;RoleMembership"
+      - name: Upload dacpac artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoData-CI-dacpac
+          path: AutoData/bin/Release/*.dacpac
+          if-no-files-found: error
